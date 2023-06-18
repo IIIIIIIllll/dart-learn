@@ -1,14 +1,20 @@
-extension StringParsing on DateTime {
-    String parseString() {
-      String s = toString();
-      return s.substring(0, s.length - 4);
-    }
+extension DateTimeExtension on DateTime {
+  String formatDateTime() {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    
+    String year = this.year.toString();
+    String month = twoDigits(this.month);
+    String day = twoDigits(this.day);
+    String hour = twoDigits(this.hour);
+    String minute = twoDigits(this.minute);
+    String second = twoDigits(this.second);
+    
+    return '$year.$month.$day $hour:$minute:$second';
   }
-
+}
 void main() {
-  // Implement an extension on [DateTime], returning a [String] in format of
-  // `YYYY.MM.DD hh:mm:ss` (e.g. `2023.01.01 00:00:00`).
+  DateTime currentTime = DateTime.now();
+  String formattedDateTime = currentTime.formatDateTime();
   
-  final date = DateTime.now();
-  print(date.parseString());
+  print(formattedDateTime); // Output: 2023.01.01 00:00:00
 }
