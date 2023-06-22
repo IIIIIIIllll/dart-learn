@@ -27,13 +27,15 @@ class Character {
   /// Returns the total damage of this [Character].
   int get damage {
     Iterable<Item> equippedWeapons = equipped.whereType<Weapon>();
-    return equippedWeapons.fold(0, (sum, weapon) => sum + (weapon as Weapon).damage);
+    return equippedWeapons.fold(
+        0, (sum, weapon) => sum + (weapon as Weapon).damage);
   }
 
   /// Returns the total defense of this [Character].
   int get defense {
     Iterable<Item> equippedArmor = equipped.whereType<Armor>();
-    return equippedArmor.fold(0, (sum, armor) => sum + (armor as Armor).defense);
+    return equippedArmor.fold(
+        0, (sum, armor) => sum + (armor as Armor).defense);
   }
 
   /// Equips the provided [item], meaning putting it to the corresponding slot.
@@ -49,33 +51,25 @@ class Character {
         throw OverflowException();
       }
     } else if (item is Armor) {
-      
       if (item is Hat) {
-        
-        if(hat == null) {
+        if (hat == null) {
           hat = item;
         } else if (hat is Helmet) {
-          
           item.defense = item.defense + 5;
-          
+
           hat = item;
         } else {
           throw OverflowException();
         }
-        
-        
       } else if (item is Helmet) {
-        
-        if(hat == null) {
+        if (hat == null) {
           hat = item;
-          
         } else if (hat is Hat) {
           item.defense += 1;
           hat = item;
         } else {
           throw OverflowException();
         }
-        
       } else if (item is Torso && torso == null) {
         torso = item;
       } else if (item is Legs && legs == null) {
@@ -103,7 +97,7 @@ class Helmet extends Item with Armor {
   int _defense = 5;
   @override
   int get defense => _defense;
-  set defense (value) {
+  set defense(value) {
     _defense = value;
   }
 }
@@ -112,7 +106,7 @@ class Hat extends Item with Armor {
   int _defense = 1;
   @override
   int get defense => _defense;
-  set defense (value) {
+  set defense(value) {
     _defense = value;
   }
 }
@@ -137,17 +131,13 @@ void main() {
   var sword = Sword();
   var helmet = Helmet();
   var hat = Hat();
-  
-  
+
   try {
     character.equip(sword);
     character.equip(sword);
-    
+
     character.equip(hat);
     character.equip(helmet);
-    
-    
-    
   } catch (e) {
     if (e is OverflowException) {
       print("Equipment slot is already occupied.");
@@ -157,7 +147,7 @@ void main() {
       return;
     }
   }
-  
-  print(character.damage);  
-  print(character.defense); 
+
+  print(character.damage);
+  print(character.defense);
 }
