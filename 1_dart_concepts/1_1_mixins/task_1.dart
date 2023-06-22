@@ -16,5 +16,5 @@ void main() {
   DateTime currentTime = DateTime.now();
   String formattedDateTime = currentTime.formatDateTime();
   
-  print(formattedDateTime); // Output: 2023.01.01 00:00:00
+  print(formattedDateTime);
 }
