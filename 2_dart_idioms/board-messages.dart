@@ -79,7 +79,6 @@ class InMemoryMessagesRepository implements MessagesRepository {
   }
 }
 
-// Usage example
 void main() async {
   final boardsRepo = InMemoryBoardsRepository();
   final messagesRepo = InMemoryMessagesRepository();
