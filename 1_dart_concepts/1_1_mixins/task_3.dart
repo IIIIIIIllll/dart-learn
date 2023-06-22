@@ -26,13 +26,13 @@ class Character {
 
   /// Returns the total damage of this [Character].
   int get damage {
-    var equippedWeapons = equipped.where((item) => item is Weapon);
+    Iterable<Item> equippedWeapons = equipped.whereType<Weapon>();
     return equippedWeapons.fold(0, (sum, weapon) => sum + (weapon as Weapon).damage);
   }
 
   /// Returns the total defense of this [Character].
   int get defense {
-    var equippedArmor = equipped.where((item) => item is Armor);
+    Iterable<Item> equippedArmor = equipped.whereType<Armor>();
     return equippedArmor.fold(0, (sum, armor) => sum + (armor as Armor).defense);
   }
 
@@ -51,16 +51,31 @@ class Character {
     } else if (item is Armor) {
       
       if (item is Hat) {
+        
         if(hat == null) {
           hat = item;
         } else if (hat is Helmet) {
-          item.defense += 1;
+          
+          item.defense = item.defense + 5;
+          
           hat = item;
+        } else {
+          throw OverflowException();
         }
         
         
       } else if (item is Helmet) {
-        torso = item;
+        
+        if(hat == null) {
+          hat = item;
+          
+        } else if (hat is Hat) {
+          item.defense += 1;
+          hat = item;
+        } else {
+          throw OverflowException();
+        }
+        
       } else if (item is Torso && torso == null) {
         torso = item;
       } else if (item is Legs && legs == null) {
@@ -85,15 +100,20 @@ class Sword extends Item with Weapon {
 
 /// Example armor class implementing the [Armor] mixin.
 class Helmet extends Item with Armor {
+  int _defense = 5;
   @override
-  int get defense => 5;
+  int get defense => _defense;
+  set defense (value) {
+    _defense = value;
+  }
 }
 
 class Hat extends Item with Armor {
+  int _defense = 1;
   @override
-  int get defense => 1;
+  int get defense => _defense;
   set defense (value) {
-    defense = value;
+    _defense = value;
   }
 }
 
@@ -118,26 +138,26 @@ void main() {
   var helmet = Helmet();
   var hat = Hat();
   
+  
   try {
     character.equip(sword);
+    character.equip(sword);
+    
     character.equip(hat);
     character.equip(helmet);
-    character.equip(helmet);
+    
+    
+    
   } catch (e) {
     if (e is OverflowException) {
       print("Equipment slot is already occupied.");
+      return;
     } else {
       print("An error occurred while equipping the item: $e");
+      return;
     }
   }
   
-  print(character.damage);  // Output: 10
-  print(character.defense); // Output: 5
+  print(character.damage);  
+  print(character.defense); 
 }
-
-
-
-
-
-
-
