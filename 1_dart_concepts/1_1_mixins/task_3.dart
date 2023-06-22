@@ -1,14 +1,14 @@
 /// Object equipable by a [Character].
 abstract class Item {}
 
-/// Mixin for items that provide damage.
+/// Mixin for weapons that provide a damage property.
 mixin Weapon on Item {
-  int damage = 0;
+  int get damage;
 }
 
-/// Mixin for items that provide defense.
+/// Mixin for armor that provide a defense property.
 mixin Armor on Item {
-  int defense = 0;
+  int get defense;
 }
 
 /// Entity equipping [Item]s.
@@ -26,24 +26,14 @@ class Character {
 
   /// Returns the total damage of this [Character].
   int get damage {
-    int totalDamage = 0;
-    for (var item in equipped) {
-      if (item is Weapon) {
-        totalDamage += item.damage;
-      }
-    }
-    return totalDamage;
+    var equippedWeapons = equipped.where((item) => item is Weapon);
+    return equippedWeapons.fold(0, (sum, weapon) => sum + (weapon as Weapon).damage);
   }
 
   /// Returns the total defense of this [Character].
   int get defense {
-    int totalDefense = 0;
-    for (var item in equipped) {
-      if (item is Armor) {
-        totalDefense += item.defense;
-      }
-    }
-    return totalDefense;
+    var equippedArmor = equipped.where((item) => item is Armor);
+    return equippedArmor.fold(0, (sum, armor) => sum + (armor as Armor).defense);
   }
 
   /// Equips the provided [item], meaning putting it to the corresponding slot.
@@ -59,10 +49,18 @@ class Character {
         throw OverflowException();
       }
     } else if (item is Armor) {
-      if (item is Hat && hat == null) {
-        hat = item;
-      } else if (item is Helmet && hat == null) {
-        hat = item;
+      
+      if (item is Hat) {
+        if(hat == null) {
+          hat = item;
+        } else if (hat is Helmet) {
+          item.defense += 1;
+          hat = item;
+        }
+        
+        
+      } else if (item is Helmet) {
+        torso = item;
       } else if (item is Torso && torso == null) {
         torso = item;
       } else if (item is Legs && legs == null) {
@@ -79,64 +77,67 @@ class Character {
 /// [Exception] indicating there's no place left in the [Character]'s slot.
 class OverflowException implements Exception {}
 
-/// Example weapon.
+/// Example weapon class implementing the [Weapon] mixin.
 class Sword extends Item with Weapon {
   @override
-  int damage;
-
-  Sword(this.damage);
+  int get damage => 10;
 }
 
-/// Example armor.
+/// Example armor class implementing the [Armor] mixin.
 class Helmet extends Item with Armor {
   @override
-  int defense;
-
-  int getDefense() {
-    return this.defense;
-  }
-
-  Helmet(this.defense);
+  int get defense => 5;
 }
 
 class Hat extends Item with Armor {
   @override
-  int defense;
-
-  Hat(this.defense);
+  int get defense => 1;
+  set defense (value) {
+    defense = value;
+  }
 }
 
 class Torso extends Item with Armor {
   @override
-  int defense;
-
-  Torso(this.defense);
+  int get defense => 10;
 }
 
 class Legs extends Item with Armor {
   @override
-  int defense;
-
-  Legs(this.defense);
+  int get defense => 7;
 }
 
 class Shoes extends Item with Armor {
   @override
-  int defense;
-
-  Shoes(this.defense);
+  int get defense => 2;
 }
 
 void main() {
-  Character character = Character();
-  Sword sword = Sword(10);
-  Helmet helmet = Helmet(5);
-  Shoes shoes = Shoes(2);
-
-  character.equip(sword);
-  character.equip(helmet);
-  character.equip(shoes);
-
-  print("Total damage: ${character.damage}");
-  print("Total defense: ${character.defense}");
+  var character = Character();
+  var sword = Sword();
+  var helmet = Helmet();
+  var hat = Hat();
+  
+  try {
+    character.equip(sword);
+    character.equip(hat);
+    character.equip(helmet);
+    character.equip(helmet);
+  } catch (e) {
+    if (e is OverflowException) {
+      print("Equipment slot is already occupied.");
+    } else {
+      print("An error occurred while equipping the item: $e");
+    }
+  }
+  
+  print(character.damage);  // Output: 10
+  print(character.defense); // Output: 5
 }
+
+
+
+
+
+
+
