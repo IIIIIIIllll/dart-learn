@@ -3,7 +3,7 @@ import 'dart:async';
 class Database<T> {
   final Map<String, T> _table = {};
   final StreamController<Map<String, T>> _changesController =
-   StreamController<Map<String, T>>.broadcast();
+      StreamController<Map<String, T>>.broadcast();
 
   Stream<Map<String, T>> get changes => _changesController.stream;
 
@@ -29,7 +29,7 @@ void main() async {
 
   await database.add(1);
   await database.add('5');
-  
+
   final res = await database.get('5');
   print(res);
 }
