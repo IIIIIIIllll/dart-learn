@@ -1,0 +1,3 @@
+class Seril {
+  const Seril();
+}

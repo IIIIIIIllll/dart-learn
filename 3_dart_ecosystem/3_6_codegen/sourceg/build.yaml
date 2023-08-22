@@ -1,0 +1,18 @@
+targets:
+  $default: 
+    builders:
+      sourceg|generator:
+        enabled: true
+        options:
+            ignore_for_files:
+              - type=lint
+
+builders:
+  generator:
+    target: ":generator"
+    import: "package:sourceg/build.dart"
+    builder_factories: ["generate"]
+    build_extensions: { ".dart": [".g.dart"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
